@@ -1,16 +1,9 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
+import { ScrollView } from "react-native";
 
 import Header from "~/components/Header";
-
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  AsyncStorage,
-  ActivityIndicator,
-  StatusBar
-} from "react-native";
+import Subscriptions from "~/components/Subscription";
 
 import { View } from "./styles";
 
@@ -24,15 +17,36 @@ tabIcon.propTypes = {
 };
 
 export default class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+
+    this._onScroll = this._onScroll.bind(this);
+  }
   static navigationOptions = {
     tabBarIcon: tabIcon
   };
+
+  _onScroll(event) {
+    const scrollPosition =
+      event &&
+      event.nativeEvent &&
+      event.nativeEvent.contentOffset &&
+      event.nativeEvent.contentOffset.y;
+    let newBouncesValue;
+    if (scrollPosition < 0) {
+      // console.log("scroll position ..... " + scrollPosition);
+    }
+  }
 
   render() {
     return (
       <View>
         <Header title="Início" />
-        <Text>Dashboard.....</Text>
+        <ScrollView onScroll={this._onScroll}>
+          <Subscriptions title="Inscrições" compId={1} />
+          <Subscriptions title="Próximos Meetups" compId={2} />
+          <Subscriptions title="Recomendados" compId={3} />
+        </ScrollView>
       </View>
     );
   }

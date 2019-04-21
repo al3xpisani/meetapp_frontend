@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import DatePicker from "react-native-date-picker";
+import { withNavigationFocus, NavigationEvents } from "react-navigation";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -72,11 +73,11 @@ class AddMeetup extends Component {
     this.initializeCheckBoxElements();
   }
 
-  componentDidMount() {
+  setDate = () => {
     const date = new Date();
     date.setHours(date.getHours() + 1, date.getMinutes(), 0);
     this.setState({ date });
-  }
+  };
 
   state = {
     date: new Date(),
@@ -162,7 +163,7 @@ class AddMeetup extends Component {
         //console.tron.log(`element is false ${element}`);
       }
     });
-    console.tron.log(`set_CBRC ********** ${updateColors["set_CBRC"]}`);
+    //console.tron.log(`set_CBRC ********** ${updateColors["set_CBRC"]}`);
     await meetupRequest(
       title,
       description,
@@ -176,6 +177,26 @@ class AddMeetup extends Component {
     );
   };
 
+  didFocus = palyload => {
+    const isFocused = this.props.navigation.isFocused();
+    if (isFocused) {
+      checkBoxIDs.forEach(element => {
+        updateColors["color_" + element] = colors.whiteTransparent;
+        updateColors["set_" + element] = false;
+      });
+      this.setDate();
+
+      this.setState({
+        ImageSource: null,
+        title: "",
+        description: "",
+        local: "",
+        meetupLogo: ""
+      });
+      this.setState(updateColors);
+    }
+  };
+
   render() {
     const { title, description, local } = this.state;
 
@@ -183,6 +204,12 @@ class AddMeetup extends Component {
 
     return (
       <ScrollView>
+        <NavigationEvents
+          onWillFocus={payload => {}}
+          onDidFocus={payload => this.didFocus(payload)}
+          onWillBlur={payload => console.log("will blur", payload)}
+          onDidBlur={payload => {}}
+        />
         <Header title={NovaMeetup} />
 
         <ViewMeetup>
@@ -366,9 +393,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(meetupActions, dispatch);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AddMeetup);
+export default withNavigationFocus(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(AddMeetup)
+);
 
 //AppRegistry.registerComponent("AddMeetup", () => AddMeetup);

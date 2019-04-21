@@ -44,7 +44,20 @@ export function* addMeetup({
       return false;
     }
 
+    //pega no async o usuário logado
+    const userIdSyncSrg = yield AsyncStorage.getItem(ASYNCSTORAGE_USERS);
+
+    if (!userIdSyncSrg) {
+      yield put(
+        meetupActions.meetupFailure(
+          JSON.stringify("erro async storage ao salvar na tabela meetups")
+        )
+      );
+      return false;
+    }
+
     const postData = {
+      users_id: JSON.parse(userIdSyncSrg).data.user.id,
       title: title,
       description: description,
       meetup_logo: "-",
@@ -61,7 +74,7 @@ export function* addMeetup({
       }
     };
 
-    //Cadastra usuário e valida o cadastro
+    //Cadastra meetup
     const responseCreateMeetup = yield call(
       api.post,
       `/${MEETUPADD}`,
@@ -99,22 +112,9 @@ export function* addMeetup({
       timeout: 30000
     });
 
-    //salva na user_meetups com inscrito default null
-    //pega no async o usuário logado
-    const userId = yield AsyncStorage.getItem(ASYNCSTORAGE_USERS);
-
-    if (!userId) {
-      yield put(
-        meetupActions.meetupFailure(
-          JSON.stringify("erro ao salvar na tabela users_meetups")
-        )
-      );
-      return false;
-    }
-
     //Insert into user_meetups
     const postDataUserMeetup = {
-      users_id: JSON.parse(userId).data.user_id,
+      users_id: JSON.parse(userIdSyncSrg).data.user.id,
       meetups_id: responseCreateMeetup.data.id,
       is_registered: false
     };
@@ -143,9 +143,15 @@ export function* addMeetup({
     const navigateAction = NavigationActions.navigate({
       key: null,
       routeName,
-      action: StackActions.reset({ routeName: subRouteName })
+      action: StackActions.reset({ index: 1, routeName: subRouteName })
     });
     navigation.dispatch(navigateAction);
+    // navigation.dispatch(
+    //   StackActions.reset({
+    //     index: 1,
+    //     actions: [NavigationActions.navigate({ routeName: "Dashboard" })]
+    //   })
+    // );
 
     yield put(meetupActions.meetupSuccess(updateImage));
     return true;

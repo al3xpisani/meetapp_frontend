@@ -1,0 +1,253 @@
+import React, { Component, Fragment } from "react";
+import {
+  AsyncStorage,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl
+} from "react-native";
+import api from "~/services/api";
+import moment from "moment";
+import {
+  withNavigationFocus,
+  NavigationEvents,
+  StackActions,
+  NavigationActions
+} from "react-navigation";
+
+import {
+  USERSNOTSUBSCRIPTED,
+  ASYNCSTORAGE_USERS,
+  MEETUPSCHEDULED,
+  RECOMMENDEDETTUP
+} from "react-native-dotenv";
+
+import SubItem from "./SubItem";
+import { Title, Content, View } from "./styles";
+
+class Subscription extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    data: [],
+    // data: [
+    //   {
+    //     id: 1,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 2,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 3,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 4,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 5,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 6,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 7,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 8,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   },
+    //   {
+    //     id: 9,
+    //     title: "Meetup de devs Chico Xavier",
+    //     description: "alvaro@gmail.com",
+    //     meetup_logo:
+    //       "http://www.thesecretcabal.com/portals/0/Site%20Images/Meetup1.jpg",
+    //     devops: "CBMK",
+    //     address: "Rua conchinchina",
+    //     qtde_subscriptions: 100
+    //   }
+    // ],
+    loading: true,
+    refreshing: false,
+    title: "",
+    compId: ""
+  };
+
+  componentDidMount() {
+    const { title, compId } = this.props;
+    this.setState({ title, compId });
+
+    this.refreshListItem();
+  }
+
+  refreshListItem = async () => {
+    this.setState({ refreshing: true });
+
+    //pega user id do asyncstorage e passa no body da req.
+    const userIdSyncSrg = await AsyncStorage.getItem(ASYNCSTORAGE_USERS);
+
+    if (!userIdSyncSrg) {
+      return false;
+    }
+
+    const postData = {
+      users_id: JSON.parse(userIdSyncSrg).data.user.id,
+      allowedDateLoad: moment().format()
+    };
+
+    let axiosConfig = {
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Access-Control-Allow-Origin": "*"
+      }
+    };
+
+    //componente de Inscritos chamando
+    if (this.state.compId === 1) {
+      const { data } = await api.post(
+        `/${USERSNOTSUBSCRIPTED}`,
+        postData,
+        axiosConfig
+      );
+
+      this.setState({ loading: false, data, refreshing: false });
+    } else if (this.state.compId === 2) {
+      //se for para listar os próximos meetups, então pega
+      //a data atual do celular e chama a api rest para listar
+      //os próximos meeetups com data maior que a data do device.
+
+      const { data } = await api.post(
+        `/${MEETUPSCHEDULED}`,
+        postData,
+        axiosConfig
+      );
+
+      this.setState({ loading: false, data, refreshing: false });
+
+      //recommended meetups
+    } else if (this.state.compId === 3) {
+      const { data } = await api.post(
+        `/${RECOMMENDEDETTUP}`,
+        postData,
+        axiosConfig
+      );
+
+      this.setState({ loading: false, data, refreshing: false });
+    }
+  };
+
+  listItem = ({ item }) => {
+    return <SubItem repository={item} />;
+  };
+
+  renderList = () => {
+    const { data, refreshing, compId } = this.state;
+
+    return (
+      <FlatList
+        key={data.id}
+        horizontal={compId !== 3 ? true : false}
+        data={data}
+        keyExtractor={item => String(item.id)}
+        renderItem={this.listItem}
+        onRefresh={this.refreshListItem}
+        refreshing={refreshing}
+      />
+    );
+  };
+
+  didFocus = async payload => {
+    const isFocused = this.props.navigation.isFocused();
+    //console.log("didFocus : " + this.props.navigation.isFocused());
+
+    if (isFocused) {
+      this.setState({ data: [], loading: true });
+      this.refreshListItem();
+    }
+  };
+
+  didBlur = payload => {
+    console.log("didBlur : " + this.props.navigation.isFocused());
+  };
+
+  render() {
+    const { loading, title } = this.state;
+    return (
+      <Content>
+        <NavigationEvents
+          onWillFocus={payload => console.log("will focus", payload)}
+          onDidFocus={payload => this.didFocus(payload)}
+          onWillBlur={payload => console.log("will blur", payload)}
+          onDidBlur={payload => this.didBlur(payload)}
+        />
+        <Title>{title}</Title>
+
+        {loading ? (
+          <View>
+            <ActivityIndicator size="large" color="#fff" />
+          </View>
+        ) : (
+          this.renderList()
+        )}
+      </Content>
+    );
+  }
+}
+
+export default withNavigationFocus(Subscription);
