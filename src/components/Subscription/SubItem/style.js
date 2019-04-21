@@ -40,7 +40,6 @@ export const Title = styled.Text`
 `;
 
 export const Image = styled.Image`
-  border: 0.1px;
   border-radius: 10px;
   height: 170;
   width: 340;

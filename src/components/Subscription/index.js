@@ -138,6 +138,7 @@ class Subscription extends Component {
 
   refreshListItem = async () => {
     this.setState({ refreshing: true });
+    let dataRest = "";
 
     //pega user id do asyncstorage e passa no body da req.
     const userIdSyncSrg = await AsyncStorage.getItem(ASYNCSTORAGE_USERS);
@@ -158,38 +159,28 @@ class Subscription extends Component {
       }
     };
 
-    //componente de Inscritos chamando
+    //se for para listar os próximos meetups, então pega
+    //a data atual do celular e chama a api rest para listar
+    //os próximos meeetups com data maior que a data do device.
+
+    let apiRest = "";
+
+    //componente de Inscritos
     if (this.state.compId === 1) {
-      const { data } = await api.post(
-        `/${USERSNOTSUBSCRIPTED}`,
-        postData,
-        axiosConfig
-      );
+      apiRest = USERSNOTSUBSCRIPTED;
 
-      this.setState({ loading: false, data, refreshing: false });
+      //próximos meetups
     } else if (this.state.compId === 2) {
-      //se for para listar os próximos meetups, então pega
-      //a data atual do celular e chama a api rest para listar
-      //os próximos meeetups com data maior que a data do device.
-
-      const { data } = await api.post(
-        `/${MEETUPSCHEDULED}`,
-        postData,
-        axiosConfig
-      );
-
-      this.setState({ loading: false, data, refreshing: false });
+      apiRest = MEETUPSCHEDULED;
 
       //recommended meetups
     } else if (this.state.compId === 3) {
-      const { data } = await api.post(
-        `/${RECOMMENDEDETTUP}`,
-        postData,
-        axiosConfig
-      );
-
-      this.setState({ loading: false, data, refreshing: false });
+      apiRest = RECOMMENDEDETTUP;
     }
+
+    dataRest = await api.post(`/${apiRest}`, postData, axiosConfig);
+
+    this.setState({ loading: false, data: dataRest.data, refreshing: false });
   };
 
   listItem = ({ item }) => {

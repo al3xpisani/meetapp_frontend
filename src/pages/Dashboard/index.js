@@ -5,6 +5,13 @@ import { ScrollView } from "react-native";
 import Header from "~/components/Header";
 import Subscriptions from "~/components/Subscription";
 
+import {
+  INICIO,
+  INSCRICOES,
+  PROXIMOMEETUP,
+  RECOMENDADOS
+} from "react-native-dotenv";
+
 import { View } from "./styles";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -41,11 +48,11 @@ export default class Dashboard extends Component {
   render() {
     return (
       <View>
-        <Header title="Início" />
+        <Header title={INICIO} />
         <ScrollView onScroll={this._onScroll}>
-          <Subscriptions title="Inscrições" compId={1} />
-          <Subscriptions title="Próximos Meetups" compId={2} />
-          <Subscriptions title="Recomendados" compId={3} />
+          <Subscriptions title={INSCRICOES} compId={1} />
+          <Subscriptions title={PROXIMOMEETUP} compId={2} />
+          <Subscriptions title={RECOMENDADOS} compId={3} />
         </ScrollView>
       </View>
     );
