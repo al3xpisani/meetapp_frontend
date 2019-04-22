@@ -18,7 +18,8 @@ import {
   USERSNOTSUBSCRIPTED,
   ASYNCSTORAGE_USERS,
   MEETUPSCHEDULED,
-  RECOMMENDEDETTUP
+  RECOMMENDEDETTUP,
+  MEETUPSEARCHBYTITLE
 } from "react-native-dotenv";
 
 import SubItem from "./SubItem";
@@ -147,7 +148,7 @@ class Subscription extends Component {
       return false;
     }
 
-    const postData = {
+    var postData = {
       users_id: JSON.parse(userIdSyncSrg).data.user.id,
       allowedDateLoad: moment().format()
     };
@@ -176,6 +177,18 @@ class Subscription extends Component {
       //recommended meetups
     } else if (this.state.compId === 3) {
       apiRest = RECOMMENDEDETTUP;
+
+      //Search by title
+    } else if (this.state.compId === 4) {
+      const { searchByTitle } = this.props;
+      apiRest = MEETUPSEARCHBYTITLE;
+
+      postData = {
+        users_id: JSON.parse(userIdSyncSrg).data.user.id,
+        allowedDateLoad: moment().format(),
+        searchByTitle
+      };
+      console.log(postData);
     }
 
     dataRest = await api.post(`/${apiRest}`, postData, axiosConfig);
@@ -193,7 +206,7 @@ class Subscription extends Component {
     return (
       <FlatList
         key={data.id}
-        horizontal={compId !== 3 ? true : false}
+        horizontal={(compId !== 3) & (compId !== 4) ? true : false}
         data={data}
         keyExtractor={item => String(item.id)}
         renderItem={this.listItem}
@@ -218,7 +231,7 @@ class Subscription extends Component {
   };
 
   render() {
-    const { loading, title } = this.state;
+    const { loading, title, data, compId } = this.state;
     return (
       <Content>
         <NavigationEvents
@@ -227,7 +240,16 @@ class Subscription extends Component {
           onWillBlur={payload => console.log("will blur", payload)}
           onDidBlur={payload => this.didBlur(payload)}
         />
-        <Title>{title}</Title>
+        {/* compId = 4 ,vem da activity de Buscar */}
+        {!loading ? (
+          compId === 4 ? (
+            <Title>
+              {data.length > 0 ? title : `Nenhum resultado encontrado`}
+            </Title>
+          ) : (
+            <Title>{data.length > 0 ? title : `Não tem ${title}`}</Title>
+          )
+        ) : null}
 
         {loading ? (
           <View>
