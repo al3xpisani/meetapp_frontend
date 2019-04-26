@@ -35,7 +35,8 @@ import {
   ViewCheckBox,
   CheckBoxText,
   ViewImagem,
-  SignupMessage
+  SignupMessage,
+  ViewDate
 } from "./styles";
 
 import {
@@ -240,16 +241,17 @@ class AddMeetup extends Component {
           </ViewInputs>
 
           <PrefText>{DATAEVENTO}</PrefText>
-          <DatePicker
-            style={{
-              backgroundColor: colors.whiteTransparent,
-              border: 1,
-              borderRadius: 1
-            }}
-            date={this.state.date}
-            onDateChange={date => this.setState({ date })}
-          />
-
+          <ViewDate>
+            <DatePicker
+              style={{
+                backgroundColor: colors.whiteTransparent,
+                border: 1,
+                borderRadius: 1
+              }}
+              date={this.state.date}
+              onDateChange={date => this.setState({ date })}
+            />
+          </ViewDate>
           <PrefText>{IMAGEM}</PrefText>
           <ViewImagem
             onStartShouldSetResponder={() => true}

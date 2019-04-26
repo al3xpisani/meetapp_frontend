@@ -34,7 +34,7 @@ export default class SearchMeetup extends Component {
   };
 
   onClick = () => {
-    this.setState({ doSearch: true });
+    if (this.state.search.length > 0) this.setState({ doSearch: true });
   };
 
   didFocus = async payload => {

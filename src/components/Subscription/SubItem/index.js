@@ -1,6 +1,8 @@
 import React from "react";
 import { Buffer } from "buffer";
 
+import { withNavigation } from "react-navigation";
+
 import { NENHUM_MEMBRO_INSCRITO } from "react-native-dotenv";
 
 import {
@@ -14,7 +16,11 @@ import {
   Iconf
 } from "./style";
 
-const SubItem = ({ repository }) => (
+openMeetupDetails = (navigation, repository, compId) => {
+  navigation.navigate("Meetup", { meetup: repository, compId });
+};
+
+const SubItem = ({ compId, navigation, repository }) => (
   <Content>
     <Image
       source={{
@@ -27,16 +33,18 @@ const SubItem = ({ repository }) => (
       <ViewColumn>
         <TitleMeetup>{repository["Meetups.title"]}</TitleMeetup>
         <Membros>
-          {repository.qtde_subscriptions > 0
-            ? repository.qtde_subscriptions + " membros"
+          {repository["Meetups.qtde_subscriptions"] > 0
+            ? repository["Meetups.qtde_subscriptions"] + " membros"
             : NENHUM_MEMBRO_INSCRITO}
         </Membros>
       </ViewColumn>
-      <Touchable>
+      <Touchable
+        onPress={() => this.openMeetupDetails(navigation, repository, compId)}
+      >
         <Iconf />
       </Touchable>
     </ViewSubscriptionDetails>
   </Content>
 );
 
-export default SubItem;
+export default withNavigation(SubItem);

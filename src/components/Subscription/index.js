@@ -143,7 +143,7 @@ class Subscription extends Component {
 
     //pega user id do asyncstorage e passa no body da req.
     const userIdSyncSrg = await AsyncStorage.getItem(ASYNCSTORAGE_USERS);
-
+    console.log("userIdSync " + userIdSyncSrg);
     if (!userIdSyncSrg) {
       return false;
     }
@@ -188,7 +188,6 @@ class Subscription extends Component {
         allowedDateLoad: moment().format(),
         searchByTitle
       };
-      console.log(postData);
     }
 
     dataRest = await api.post(`/${apiRest}`, postData, axiosConfig);
@@ -197,7 +196,14 @@ class Subscription extends Component {
   };
 
   listItem = ({ item }) => {
-    return <SubItem repository={item} />;
+    console.log(item);
+    return (
+      <SubItem
+        compId={this.state.compId}
+        navigation={this.props.navigation}
+        repository={item}
+      />
+    );
   };
 
   renderList = () => {
@@ -232,6 +238,7 @@ class Subscription extends Component {
 
   render() {
     const { loading, title, data, compId } = this.state;
+
     return (
       <Content>
         <NavigationEvents
@@ -244,10 +251,16 @@ class Subscription extends Component {
         {!loading ? (
           compId === 4 ? (
             <Title>
-              {data.length > 0 ? title : `Nenhum resultado encontrado`}
+              {data.length > 0
+                ? title + " (" + data.length + ")"
+                : `Nenhum resultado encontrado`}
             </Title>
           ) : (
-            <Title>{data.length > 0 ? title : `Não tem ${title}`}</Title>
+            <Title>
+              {data.length > 0
+                ? title + " (" + data.length + ")"
+                : title + " : Nenhuma meetup"}
+            </Title>
           )
         ) : null}
 

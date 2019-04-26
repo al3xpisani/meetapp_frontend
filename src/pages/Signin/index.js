@@ -12,7 +12,7 @@ import {
   LOGIN_INVALIDO
 } from "react-native-dotenv";
 
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, StatusBar } from "react-native";
 
 import {
   View,
@@ -59,6 +59,7 @@ class Signin extends Component {
 
     return (
       <View>
+        <StatusBar barStyle="light-content" />
         <Image source={Logo} />
         <LoginMessage>{!!error && LOGIN_INVALIDO}</LoginMessage>
         <ViewLogin>

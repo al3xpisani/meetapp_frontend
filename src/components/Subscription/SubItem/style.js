@@ -70,7 +70,10 @@ export const Membros = styled.Text`
   text-align: left;
 `;
 
-export const TitleMeetup = styled.Text`
+export const TitleMeetup = styled.Text.attrs({
+  numberOfLines: 2,
+  ellipsizeMode: "tail"
+})`
   font-family: Helvetica-Bold;
   font-size: 16px;
   color: #222222;

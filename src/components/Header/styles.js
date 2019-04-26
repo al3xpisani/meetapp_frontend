@@ -25,7 +25,15 @@ export const ViewTitle = styled.View`
   align-items: center;
   /* border: 1px;
   border-color: #fff; */
-  margin-left: ${metrics.baseMargin * 5}px;
+  /* margin-left: ${metrics.baseMargin * 5}px; */
+`;
+
+export const ViewBack = styled.View`
+  /* border: 1px;
+  border-color: #fff; */
+  width: 40px;
+  margin: 0;
+  padding: 0;
 `;
 
 export const Title = styled.Text`
@@ -35,10 +43,21 @@ export const Title = styled.Text`
 `;
 
 export const Iconf = styled(Icon)`
-  justify-content: flex-end;
-  margin-right: ${metrics.baseMargin * 2}px;
+  /* justify-content: flex-start; */
+  padding:0;
+  margin:0;
+  /* padding-right: ${metrics.baseMargin * 3}px; */
+  /* border-bottom-color: #000;
+  border: 1px; */
+`;
+
+export const IconBack = styled(Icon)`
+  justify-content: flex-start;
+  margin-left: ${metrics.baseMargin * 2}px;
   /* border-bottom-color: #000;
   border: 1px; */
 `;
 
 export const ProfileTouch = styled.TouchableOpacity``;
+
+export const ProfileTouchback = styled.TouchableOpacity``;

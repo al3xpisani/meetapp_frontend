@@ -21,6 +21,12 @@ export const ViewMeetup = styled.View`
   padding-right: ${metrics.baseMargin * 2}px;
 `;
 
+export const ViewDate = styled.View`
+  /* border-radius: 15px;
+  border: 1px;
+  height: 50px; */
+`;
+
 export const ViewImagem = styled.View`
   justify-content: center;
   align-items: center;

@@ -11,6 +11,8 @@ import Signup from "~/pages/Signup";
 import AddMeetup from "~/pages/AddMeetup";
 import SearchMeetup from "~/pages/SearchMeetup";
 import Preferences from "~/pages/Preferences";
+import Meetup from "~/components/Meetup";
+import Profile from "~/pages/Profile";
 
 import { colors } from "~/styles";
 
@@ -21,6 +23,8 @@ const Routes = (user = false) =>
         Signin,
         Signup,
         Preferences,
+        Meetup,
+        Profile,
         DashOptions: createBottomTabNavigator(
           {
             Dashboard,
